@@ -1,4 +1,4 @@
-package deconz
+package godeconz
 
 import (
 	"github.com/go-resty/resty/v2"

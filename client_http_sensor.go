@@ -1,4 +1,4 @@
-package deconz
+package godeconz
 
 type SensorRequestCreateConfig struct {
 	// (default: true)
