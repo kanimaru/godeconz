@@ -1,15 +1,15 @@
 package godeconz
 
-type AlertMode string
+type LightAlertMode string
 
-// AlertNone light is not performing an alert
-const AlertNone AlertMode = "none"
+// LightAlertNone light is not performing an alert
+const LightAlertNone LightAlertMode = "none"
 
-// AlertSelect light is blinking a short time
-const AlertSelect AlertMode = "select"
+// LightAlertSelect light is blinking a short time
+const LightAlertSelect LightAlertMode = "select"
 
-// AlertLselect light is blinking a longer time
-const AlertLselect AlertMode = "lselect"
+// LightAlertLselect light is blinking a longer time
+const LightAlertLselect LightAlertMode = "lselect"
 
 type ColorMode string
 
@@ -22,13 +22,13 @@ const ColorModeXY ColorMode = "xy"
 // ColorModeCT color temperature
 const ColorModeCT ColorMode = "ct"
 
-type EffectMode string
+type LightEffectMode string
 
-// EffectNone no effect
-const EffectNone EffectMode = "none"
+// LightEffectNone no effect
+const LightEffectNone LightEffectMode = "none"
 
-// EffectColorLoop cycle through hue values 0–360
-const EffectColorLoop EffectMode = "colorloop"
+// LightEffectColorLoop cycle through hue values 0–360
+const LightEffectColorLoop LightEffectMode = "colorloop"
 
 type LightResponseStateDetail struct {
 	// true if the light is on.
@@ -47,11 +47,11 @@ type LightResponseStateDetail struct {
 	// CIE xy color space coordinates as array [x, y] of real values (0–1).
 	Xy []float32 `json:"xy"`
 	// Temporary alert effect.
-	Alert AlertMode `json:"alert"`
+	Alert LightAlertMode `json:"alert"`
 	// The current color mode of the light
 	Colormode ColorMode `json:"colormode"`
 	// Effect of the light
-	Effect EffectMode `json:"effect"`
+	Effect LightEffectMode `json:"effect"`
 	// (0–6)	SETTABLE. Sets the speed of fans/ventilators.
 	Speed uint8 `json:"speed"`
 	// true if the light is reachable and accepts commands.
@@ -98,7 +98,7 @@ type LightResponseState struct {
 
 type LightRequestState struct {
 	// Trigger a temporary alert effect. optional
-	Alert AlertMode `json:"alert,omitempty"`
+	Alert LightAlertMode `json:"alert,omitempty"`
 	// Number (0–255)	Set the brightness of the light. Depending on the light type 0 might not mean visible "off"
 	// but minimum brightness. If the light is off and the value is greater 0 a on=true shall also be provided. optional
 	Bri *uint8 `json:"bri,omitempty"`
@@ -109,7 +109,7 @@ type LightRequestState struct {
 	// (in kelvins).	optional
 	Ct *int `json:"ct,omitempty"`
 	// Trigger an effect of the light. optional
-	Effect EffectMode `json:"effect,omitempty"`
+	Effect LightEffectMode `json:"effect,omitempty"`
 	// (0–65535)	Set the color hue of the light. The hue parameter in the HSV color model is between 0°–360° and is
 	// mapped to 0–65535 to get 16-bit resolution.	optional
 	Hue *uint16 `json:"hue,omitempty"`
@@ -122,7 +122,7 @@ type LightRequestState struct {
 	// For example, a transition time when setting on will be ignored as the Zigbee On and Off commands do not support
 	// transition times. In general, light attributes that support a range of values support transition times, while
 	// boolean values do not.	optional
-	Transitiontime *int `json:"transitiontime,omitempty"`
+	Transitiontime *uint `json:"transitiontime,omitempty"`
 	// Set the CIE xy color space coordinates as array [x, y] of real values (0–1).	optional
 	Xy []float32 `json:"xy,omitempty"`
 }

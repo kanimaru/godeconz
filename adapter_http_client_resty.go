@@ -39,13 +39,16 @@ func (c AdapterHttpClientResty) Get(path string, container interface{}) (*resty.
 	return response, nil
 }
 
-func (c AdapterHttpClientResty) Post(path string, data interface{}) (*resty.Response, error) {
+func (c AdapterHttpClientResty) Post(path string, data interface{}, container interface{}) (*resty.Response, error) {
 	r := c.client.R()
 	if c.trace {
 		r = r.EnableTrace()
 	}
 	if data != nil {
 		r.SetBody(data)
+	}
+	if container != nil {
+		r.SetResult(container)
 	}
 	response, err := r.
 		Put(path)
@@ -60,13 +63,16 @@ func (c AdapterHttpClientResty) Post(path string, data interface{}) (*resty.Resp
 	return response, nil
 }
 
-func (c AdapterHttpClientResty) Put(path string, data interface{}) (*resty.Response, error) {
+func (c AdapterHttpClientResty) Put(path string, data interface{}, container interface{}) (*resty.Response, error) {
 	r := c.client.R()
 	if c.trace {
 		r = r.EnableTrace()
 	}
 	if data != nil {
 		r.SetBody(data)
+	}
+	if container != nil {
+		r.SetResult(container)
 	}
 	response, err := r.
 		Put(path)

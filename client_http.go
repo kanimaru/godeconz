@@ -15,8 +15,8 @@ type Settings struct {
 
 type HttpClientAdapter[R any] interface {
 	Get(path string, container interface{}) (R, error)
-	Post(path string, container interface{}) (R, error)
-	Put(path string, container interface{}) (R, error)
+	Post(path string, data interface{}, container interface{}) (R, error)
+	Put(path string, data interface{}, container interface{}) (R, error)
 	Delete(path string, container interface{}) (R, error)
 }
 
@@ -48,14 +48,24 @@ func (c *Client[R]) Get(path string, container interface{}, pathArguments ...any
 	return c.httpClient.Get(p, container)
 }
 
-func (c *Client[R]) Post(path string, container interface{}, pathArguments ...any) (R, error) {
+func (c *Client[R]) PostWithResult(path string, body interface{}, container interface{}, pathArguments ...any) (R, error) {
 	p := c.getPath(path, pathArguments)
-	return c.httpClient.Post(p, container)
+	return c.httpClient.Post(p, body, container)
 }
 
-func (c *Client[R]) Put(path string, container interface{}, pathArguments ...any) (R, error) {
+func (c *Client[R]) Post(path string, body interface{}, pathArguments ...any) (R, error) {
 	p := c.getPath(path, pathArguments)
-	return c.httpClient.Put(p, container)
+	return c.httpClient.Post(p, body, nil)
+}
+
+func (c *Client[R]) PutWithResult(path string, body interface{}, container interface{}, pathArguments ...any) (R, error) {
+	p := c.getPath(path, pathArguments)
+	return c.httpClient.Put(p, body, container)
+}
+
+func (c *Client[R]) Put(path string, body interface{}, pathArguments ...any) (R, error) {
+	p := c.getPath(path, pathArguments)
+	return c.httpClient.Put(p, body, nil)
 }
 
 func (c *Client[R]) Delete(path string, container interface{}, pathArguments ...any) (R, error) {

@@ -6,7 +6,7 @@ It has exchangeable HTTP Client (default Resty) and Logger (default standard go 
 ## Features
 - [ ] Alarm Systems 
 - [ ] Configuration 
-- [ ] Groups 
+- [x] Groups 
 - [x] Lights 
 - [ ] Rules 
 - [ ] Scenes 
@@ -15,6 +15,7 @@ It has exchangeable HTTP Client (default Resty) and Logger (default standard go 
 - [ ] Button Events
 - [ ] Touchlink
 - [ ] Websocket
+- [ ] ETag support
 
 ## Example
 
