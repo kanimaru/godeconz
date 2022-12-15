@@ -32,40 +32,40 @@ const LightEffectColorLoop LightEffectMode = "colorloop"
 
 type LightResponseStateDetail struct {
 	// true if the light is on.
-	On bool `json:"on"`
+	On *bool `json:"on"`
 	// (0–255)	Brightness of the light. Depending on the light type 0 might not mean visible "off" but minimum
 	// brightness.
-	Bri int `json:"bri"`
+	Bri *int `json:"bri"`
 	// (0–65535)	Color hue of the light. The hue parameter in the HSV color model is between 0°–360° and is mapped
 	// to 0–65535 to get 16-bit resolution.
-	Hue int `json:"hue"`
+	Hue *int `json:"hue"`
 	// (0–255)	Color saturation of the light. There 0 means no color at all and 255 is the greatest saturation of
 	// the color.
-	Sat int `json:"sat"`
+	Sat *int `json:"sat"`
 	// (ctmin–ctmax)	Mired color temperature of the light.	Where Mired is 1000000 / color temperature (in kelvins).
-	Ct int `json:"ct"`
+	Ct *int `json:"ct"`
 	// CIE xy color space coordinates as array [x, y] of real values (0–1).
-	Xy []float32 `json:"xy"`
+	Xy *[]float32 `json:"xy"`
 	// Temporary alert effect.
-	Alert LightAlertMode `json:"alert"`
+	Alert *LightAlertMode `json:"alert"`
 	// The current color mode of the light
-	Colormode ColorMode `json:"colormode"`
+	Colormode *ColorMode `json:"colormode"`
 	// Effect of the light
-	Effect LightEffectMode `json:"effect"`
+	Effect *LightEffectMode `json:"effect"`
 	// (0–6)	SETTABLE. Sets the speed of fans/ventilators.
-	Speed uint8 `json:"speed"`
+	Speed *uint8 `json:"speed"`
 	// true if the light is reachable and accepts commands.
-	Reachable bool `json:"reachable"`
+	Reachable *bool `json:"reachable"`
 }
 
 type LightResponseState struct {
 
 	// The color capabilities as reported by the light.
-	Colorcapabilities int `json:"colorcapabilities"`
+	Colorcapabilities *int `json:"colorcapabilities"`
 	// The maximum mired color temperature value a device supports.
-	Ctmax int `json:"ctmax"`
+	Ctmax *int `json:"ctmax"`
 	// The minimum mired color temperature value a device supports.
-	Ctmin int `json:"ctmin"`
+	Ctmin *int `json:"ctmin"`
 	// Last time the device announced itself to the network.
 	Lastannounced string `json:"lastannounced"`
 	// Last time the device has transmitted any data.
@@ -74,7 +74,7 @@ type LightResponseState struct {
 	Etag string `json:"etag"`
 	// Indicates if the light can change color. Deprecated - use state instead: if light has no color colormode, hue
 	// and xy will not be shown.
-	Hascolor bool `json:"hascolor"`
+	Hascolor *bool `json:"hascolor"`
 	// The manufacturer of the light device.
 	Manufacturer string `json:"manufacturer"`
 	// Name of a light.
@@ -82,9 +82,9 @@ type LightResponseState struct {
 	// An identifier unique to the product.
 	Modelid string `json:"modelid"`
 	// Not used in the current version.
-	Pointsymbol interface{} `json:"pointsymbol"`
+	Pointsymbol *interface{} `json:"pointsymbol"`
 	// SETTABLE. Brightness to set after power on (limited to DE devices).
-	Powerup int `json:"powerup"`
+	Powerup *int `json:"powerup"`
 	// Firmware version.
 	Swversion string `json:"swversion"`
 	// Human-readable type of the light.

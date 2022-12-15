@@ -47,7 +47,7 @@ type SensorResponse[C, S any] struct {
 	// The manufacturer name of the sensor.
 	Manufacturername string `json:"manufacturername"`
 	// The mode of the sensor.
-	Mode SensorMode `json:"mode"`
+	Mode *SensorMode `json:"mode"`
 	// The model id of the sensor.
 	Modelid string `json:"modelid"`
 	// The name of the sensor.
