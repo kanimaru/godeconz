@@ -15,7 +15,11 @@ It has exchangeable HTTP Client (default Resty) and Logger (default standard go 
 - [ ] Button Events
 - [ ] Touchlink
 - [ ] Websocket
-- [ ] ETag support
+- [x] ETag support
+
+## Etag Support Note
+Currently, it is implemented on request level. Could be improved to be on entity level because when you request a group 
+of lights for example you receive ETags also that aren't processed yet. 
 
 ## Example
 
@@ -60,7 +64,6 @@ func main() {
 		log.Noticef("Name: %v", light.Name)
 	}
 }
-
 ```
 
 ## Resources

@@ -8,6 +8,7 @@ type AdapterHttpClientResty struct {
 	client *resty.Client
 	logger Logger
 	trace  bool
+	cache  map[string]EtagCacheEntry
 }
 
 // CreateAdapterHttpClientResty to plugin deconz api
@@ -16,6 +17,7 @@ func CreateAdapterHttpClientResty(client *resty.Client, logger Logger, trace boo
 		client: client,
 		logger: logger,
 		trace:  trace,
+		cache:  make(map[string]EtagCacheEntry),
 	}
 }
 
@@ -24,11 +26,21 @@ func (c AdapterHttpClientResty) Get(path string, container interface{}) (*resty.
 	if c.trace {
 		r = r.EnableTrace()
 	}
+
+	content, ok := c.cache[path]
+	if ok {
+		r.SetHeader("If-None-Match", content.etag)
+	}
+
 	response, err := r.
 		SetResult(&container).
 		Get(path)
 	if err != nil {
 		return response, err
+	}
+
+	if c.HandleEtag(response, path, &container) {
+		c.logger.Debugf("Request cached")
 	}
 
 	if response.IsError() {
@@ -37,6 +49,27 @@ func (c AdapterHttpClientResty) Get(path string, container interface{}) (*resty.
 		c.logger.Debugf("Request successfully")
 	}
 	return response, nil
+}
+
+func (c AdapterHttpClientResty) HandleEtag(response *resty.Response, path string, container interface{}) bool {
+	entry, ok := c.cache[path]
+
+	if response.StatusCode() == 304 {
+		container = entry.content
+		return true
+	}
+
+	etag := response.Header().Get("ETag")
+	if etag != "" {
+		if !ok {
+			entry = EtagCacheEntry{
+				etag: etag,
+			}
+			c.cache[path] = entry
+		}
+		entry.content = &container
+	}
+	return false
 }
 
 func (c AdapterHttpClientResty) Post(path string, data interface{}, container interface{}) (*resty.Response, error) {
@@ -106,4 +139,13 @@ func (c AdapterHttpClientResty) Delete(path string, data interface{}) (*resty.Re
 		c.logger.Debugf("Request successfully")
 	}
 	return response, nil
+}
+
+//
+// Etag handling
+//
+
+type EtagCacheEntry struct {
+	etag    string
+	content interface{}
 }
