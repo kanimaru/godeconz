@@ -13,25 +13,14 @@ type Client struct {
 	logger    godeconz.Logger
 }
 
-// Callback that get called when websocket receives a message
-type Callback interface {
-	OnMessage(message Message)
-}
-
-type CallbackConfig struct {
-	filter   Filter
-	callback Callback
-}
-
 type Adapter interface {
 	// Connect to the given host
-	Connect(host url.URL) error
-	// Close the connection dirty
-	Close() error
-	// ReadMessages of the buffer
-	ReadMessages(handler func([]byte))
+	Connect(host *url.URL, messages chan<- []byte) error
 }
 
+// CreateClient creates a websocket client for Phoscon WSS.
+// The Websocket functionality is still under development.
+// Notably added and deleted notifications might not be issued under all circumstances.
 func CreateClient(adapter Adapter, logger godeconz.Logger) *Client {
 	return &Client{
 		adapter: adapter,
@@ -39,29 +28,17 @@ func CreateClient(adapter Adapter, logger godeconz.Logger) *Client {
 	}
 }
 
-func (c *Client) Connect(host url.URL) {
-	go c.adapter.ReadMessages(c.handleMessages)
-	err := c.adapter.Connect(host)
+func (c *Client) Connect(host *url.URL) {
+	messages := make(chan []byte)
+	go func() {
+		for msg := range messages {
+			c.handleMessages(msg)
+		}
+	}()
+	err := c.adapter.Connect(host, messages)
 	if err != nil {
 		panic(err)
 	}
-}
-
-func (c *Client) AddCallback(callback Callback, filter Filter) {
-	c.callbacks.PushBack(CallbackConfig{
-		filter:   filter,
-		callback: callback,
-	})
-}
-
-func (c *Client) RemoveCallback(callback Callback) bool {
-	for el := c.callbacks.Front(); el != nil; el = el.Next() {
-		if el.Value.(CallbackConfig).callback == callback {
-			c.callbacks.Remove(el)
-			return true
-		}
-	}
-	return false
 }
 
 func (c *Client) handleMessages(messageData []byte) {
