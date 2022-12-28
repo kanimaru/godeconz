@@ -10,24 +10,28 @@ import (
 )
 
 type AdapterWebsocketClientGorilla struct {
-	host       url.URL
+	host       *url.URL
 	logger     godeconz.Logger
 	connection *websocket.Conn
 	closed     chan interface{}
+	dialer     *websocket.Dialer
 }
 
-func CreateAdapterWebsocketClientGorilla(logger godeconz.Logger) Adapter {
+func CreateAdapterWebsocketClientGorilla(dialer *websocket.Dialer, logger godeconz.Logger) Adapter {
 	return &AdapterWebsocketClientGorilla{
+		dialer: dialer,
 		logger: logger,
 		closed: make(chan interface{}),
 	}
 }
 
-func (a *AdapterWebsocketClientGorilla) Connect(host url.URL) error {
-	a.logger.Infof("Connect to %v", host)
+func (a *AdapterWebsocketClientGorilla) Connect(host *url.URL, messages chan<- []byte) error {
+	a.logger.Infof("Connecting to %v", host)
 	a.host = host
-	connection, _, err := websocket.DefaultDialer.Dial(host.String(), nil)
+	connection, _, err := a.dialer.Dial(host.String(), nil)
 	a.connection = connection
+	go a.ReadMessages(messages)
+
 	if err != nil {
 		a.logger.Errorf("Problems with connection: %v", err)
 		return err
@@ -44,7 +48,7 @@ func (a *AdapterWebsocketClientGorilla) Connect(host url.URL) error {
 	signal.Notify(interrupt, os.Interrupt)
 
 	for {
-		a.logger.Infof("Connected to %v")
+		a.logger.Infof("Connected to %v", host)
 		select {
 		case <-a.closed:
 			a.logger.Infof("Websocket closed by program")
@@ -75,16 +79,18 @@ func (a *AdapterWebsocketClientGorilla) CloseGracefully() error {
 	return a.connection.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 }
 
-func (a *AdapterWebsocketClientGorilla) ReadMessages(handler func([]byte)) {
+func (a *AdapterWebsocketClientGorilla) ReadMessages(messages chan<- []byte) {
 	defer close(a.closed)
-	messageType, data, err := a.connection.ReadMessage()
-	if err != nil {
-		a.logger.Errorf("Can't read message: %v", err)
-	}
-	if messageType == websocket.TextMessage {
-		a.logger.Debugf("Receiving message %v", string(data))
-		handler(data)
-	} else {
-		a.logger.Debugf("Receiving unknown message")
+	for {
+		messageType, data, err := a.connection.ReadMessage()
+		if err != nil {
+			a.logger.Errorf("Can't read message: %v", err)
+		}
+		if messageType == websocket.TextMessage {
+			a.logger.Debugf("Receiving message %v", string(data))
+			messages <- data
+		} else {
+			a.logger.Debugf("Receiving unknown message")
+		}
 	}
 }
