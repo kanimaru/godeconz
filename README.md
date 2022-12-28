@@ -14,7 +14,7 @@ It has exchangeable HTTP Client (default Resty) and Logger (default standard go 
 - [x] Sensors
 - [ ] Button Events
 - [ ] Touchlink
-- [ ] Websocket
+- [x] Websocket
 - [x] ETag support
 
 ## Etag Support Note
