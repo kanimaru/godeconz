@@ -1,4 +1,4 @@
-package godeconz
+package http
 
 type SensorRequestCreateConfig struct {
 	// (default: true)
@@ -70,23 +70,23 @@ type SensorRequestUpdate struct {
 }
 
 // CreateSensor Creates a new CLIP sensor.
-func (c *HttpClient[R]) CreateSensor(create SensorRequestCreate[any]) (R, error) {
+func (c *Client[R]) CreateSensor(create SensorRequestCreate[any]) (R, error) {
 	return c.Post("/sensors", create)
 }
 
 // GetAllSensors Returns a list of all sensors. If there are no sensors in the system an empty object {} is
 // returned.
-func (c *HttpClient[R]) GetAllSensors(container *map[string]SensorResponse[any, any]) (R, error) {
+func (c *Client[R]) GetAllSensors(container *map[string]SensorResponse[any, any]) (R, error) {
 	return c.Get("/sensors", container)
 }
 
 // GetSensor Returns the sensor with the specified id.
-func (c *HttpClient[R]) GetSensor(id string, container *SensorResponse[any, any]) (R, error) {
+func (c *Client[R]) GetSensor(id string, container *SensorResponse[any, any]) (R, error) {
 	return c.Get("/sensors/%s", container, id)
 }
 
 // UpdateSensor Update a sensor with the specified parameters.
-func (c *HttpClient[R]) UpdateSensor(id string, data SensorRequestUpdate) (R, error) {
+func (c *Client[R]) UpdateSensor(id string, data SensorRequestUpdate) (R, error) {
 	return c.Put("/sensors/%s", data, id)
 }
 
@@ -95,17 +95,17 @@ func (c *HttpClient[R]) UpdateSensor(id string, data SensorRequestUpdate) (R, er
 // To get an overview on which parameters are available for a particular device, get the sensor state of either
 // all (https://dresden-elektronik.github.io/deconz-rest-doc/endpoints/sensors/#getall)
 // or a single sensor https://dresden-elektronik.github.io/deconz-rest-doc/endpoints/sensors/#getsensor.
-func (c *HttpClient[R]) ChangeSensorConfig(id string, config interface{}) (R, error) {
+func (c *Client[R]) ChangeSensorConfig(id string, config interface{}) (R, error) {
 	return c.Put("/sensors/%s/config", config, id)
 }
 
 // ChangeSensorState Update a sensor state with the specified parameters.
 // Changing the sensor state is only allowed for CLIP sensors.
-func (c *HttpClient[R]) ChangeSensorState(id string, state interface{}) (R, error) {
+func (c *Client[R]) ChangeSensorState(id string, state interface{}) (R, error) {
 	return c.Put("/sensors/%s/state", state, id)
 }
 
 // DeleteSensor Delete a sensor.
-func (c *HttpClient[R]) DeleteSensor(id string) (R, error) {
+func (c *Client[R]) DeleteSensor(id string) (R, error) {
 	return c.Delete("/sensors/%s", nil, id)
 }

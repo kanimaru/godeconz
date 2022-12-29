@@ -1,4 +1,4 @@
-package godeconz
+package http
 
 type LightAlertMode string
 
@@ -136,37 +136,37 @@ type LightRequestDelete struct {
 }
 
 // GetAllLights Returns a list of all lights.
-func (c *HttpClient[R]) GetAllLights(container *map[string]LightResponseState) (R, error) {
+func (c *Client[R]) GetAllLights(container *map[string]LightResponseState) (R, error) {
 	return c.Get("/lights", &container)
 }
 
 // GetLightState Returns the full state of a light.
-func (c *HttpClient[R]) GetLightState(id string, container *LightResponseState) (R, error) {
+func (c *Client[R]) GetLightState(id string, container *LightResponseState) (R, error) {
 	return c.Get("/lights/%s", &container, id)
 }
 
 // SetLightState Sets the state of a light.
-func (c *HttpClient[R]) SetLightState(id string, state LightRequestState) (R, error) {
+func (c *Client[R]) SetLightState(id string, state LightRequestState) (R, error) {
 	return c.Put("/lights/%s/state", state, id)
 }
 
 // SetLightAttributes Sets attributes of a light which are not related to its state.
-func (c *HttpClient[R]) SetLightAttributes(id string, attr LightRequestAttribute) (R, error) {
+func (c *Client[R]) SetLightAttributes(id string, attr LightRequestAttribute) (R, error) {
 	return c.Put("/lights/%s", attr, id)
 }
 
 // DeleteLight Removes the light from the gateway. It will not be shown in any REST-API call. Also deletes all
 // groups and scenes on the light device.
-func (c *HttpClient[R]) DeleteLight(id string, reset LightRequestDelete) (R, error) {
+func (c *Client[R]) DeleteLight(id string, reset LightRequestDelete) (R, error) {
 	return c.Delete("/lights/%s", reset, id)
 }
 
 // RemoveFromAllGroups Remove the light from all groups it is a member of.
-func (c *HttpClient[R]) RemoveFromAllGroups(id string) (R, error) {
+func (c *Client[R]) RemoveFromAllGroups(id string) (R, error) {
 	return c.Delete("/lights/%s/groups", nil, id)
 }
 
 // RemoveFromAllScenes Remove the light from all scenes it is a member of.
-func (c *HttpClient[R]) RemoveFromAllScenes(id string) (R, error) {
+func (c *Client[R]) RemoveFromAllScenes(id string) (R, error) {
 	return c.Delete("/lights/%s/scenes", nil, id)
 }

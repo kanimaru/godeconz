@@ -1,19 +1,20 @@
-package godeconz
+package http
 
 import (
 	"github.com/go-resty/resty/v2"
+	"github.com/kanimaru/godeconz"
 )
 
-type AdapterHttpClientResty struct {
+type AdapterResty struct {
 	client *resty.Client
-	logger Logger
+	logger godeconz.Logger
 	trace  bool
 	cache  map[string]EtagCacheEntry
 }
 
 // CreateAdapterHttpClientResty to plugin deconz api
-func CreateAdapterHttpClientResty(client *resty.Client, logger Logger, trace bool) HttpClientAdapter[*resty.Response] {
-	return AdapterHttpClientResty{
+func CreateAdapterHttpClientResty(client *resty.Client, logger godeconz.Logger, trace bool) ClientAdapter[*resty.Response] {
+	return AdapterResty{
 		client: client,
 		logger: logger,
 		trace:  trace,
@@ -21,7 +22,7 @@ func CreateAdapterHttpClientResty(client *resty.Client, logger Logger, trace boo
 	}
 }
 
-func (c AdapterHttpClientResty) Get(path string, container interface{}) (*resty.Response, error) {
+func (c AdapterResty) Get(path string, container interface{}) (*resty.Response, error) {
 	r := c.client.R()
 	if c.trace {
 		r = r.EnableTrace()
@@ -51,7 +52,7 @@ func (c AdapterHttpClientResty) Get(path string, container interface{}) (*resty.
 	return response, nil
 }
 
-func (c AdapterHttpClientResty) HandleEtag(response *resty.Response, path string, container interface{}) bool {
+func (c AdapterResty) HandleEtag(response *resty.Response, path string, container interface{}) bool {
 	entry, ok := c.cache[path]
 
 	if response.StatusCode() == 304 {
@@ -72,7 +73,7 @@ func (c AdapterHttpClientResty) HandleEtag(response *resty.Response, path string
 	return false
 }
 
-func (c AdapterHttpClientResty) Post(path string, data interface{}, container interface{}) (*resty.Response, error) {
+func (c AdapterResty) Post(path string, data interface{}, container interface{}) (*resty.Response, error) {
 	r := c.client.R()
 	if c.trace {
 		r = r.EnableTrace()
@@ -96,7 +97,7 @@ func (c AdapterHttpClientResty) Post(path string, data interface{}, container in
 	return response, nil
 }
 
-func (c AdapterHttpClientResty) Put(path string, data interface{}, container interface{}) (*resty.Response, error) {
+func (c AdapterResty) Put(path string, data interface{}, container interface{}) (*resty.Response, error) {
 	r := c.client.R()
 	if c.trace {
 		r = r.EnableTrace()
@@ -120,7 +121,7 @@ func (c AdapterHttpClientResty) Put(path string, data interface{}, container int
 	return response, nil
 }
 
-func (c AdapterHttpClientResty) Delete(path string, data interface{}) (*resty.Response, error) {
+func (c AdapterResty) Delete(path string, data interface{}) (*resty.Response, error) {
 	r := c.client.R()
 	if c.trace {
 		r = r.EnableTrace()

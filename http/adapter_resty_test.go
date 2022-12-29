@@ -1,4 +1,4 @@
-package godeconz
+package http
 
 import (
 	"encoding/json"
@@ -19,7 +19,7 @@ func TestAdapterHttpClientResty_Get(t *testing.T) {
 		defer server.Close()
 
 		// GIVEN
-		c := AdapterHttpClientResty{
+		c := AdapterResty{
 			client: resty.New(),
 			logger: NewMockLogger(),
 			trace:  false,
@@ -89,4 +89,8 @@ func (l *MockLogger) Errorf(format string, args ...interface{}) {
 
 func (l *MockLogger) Warnf(format string, args ...interface{}) {
 	l.logger.Printf("[Warn]"+format, args...)
+}
+
+func (l *MockLogger) Infof(format string, args ...interface{}) {
+	l.logger.Printf("[Info]"+format, args...)
 }

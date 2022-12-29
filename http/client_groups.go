@@ -1,4 +1,4 @@
-package godeconz
+package http
 
 type GroupRequestCreate struct {
 	Name string `json:"name"`
@@ -125,34 +125,34 @@ type GroupRequestState struct {
 
 // CreateGroup creates a new empty group. Creating a group with a name which already exists will not create a new group
 // or fail. Such a call does only return the id of the existing group.
-func (c *HttpClient[R]) CreateGroup(create GroupRequestCreate, createResponse *GroupResponseCreate) (R, error) {
+func (c *Client[R]) CreateGroup(create GroupRequestCreate, createResponse *GroupResponseCreate) (R, error) {
 	return c.PostWithResult("/groups", create, createResponse)
 }
 
 // GetAllGroups returns a list of all groups.
-func (c *HttpClient[R]) GetAllGroups(groups *map[string]GroupResponse) (R, error) {
+func (c *Client[R]) GetAllGroups(groups *map[string]GroupResponse) (R, error) {
 	return c.Get("/groups", groups)
 }
 
 // GetGroupAttributes returns the full state of a group.
-func (c *HttpClient[R]) GetGroupAttributes(id string, attribute *GroupResponseAttribute) (R, error) {
+func (c *Client[R]) GetGroupAttributes(id string, attribute *GroupResponseAttribute) (R, error) {
 	return c.Get("/groups/%s", attribute, id)
 }
 
 // SetGroupAttributes of a group which are not related to its state. In order to add or remove lights to the
 // group the lights must be powered on.
-func (c *HttpClient[R]) SetGroupAttributes(id string, attribute GroupRequestAttribute) (R, error) {
+func (c *Client[R]) SetGroupAttributes(id string, attribute GroupRequestAttribute) (R, error) {
 	return c.Put("/groups/%s", attribute, id)
 }
 
 // SetGroupState Sets the state of a group.
-func (c *HttpClient[R]) SetGroupState(id string, state GroupRequestState) (R, error) {
+func (c *Client[R]) SetGroupState(id string, state GroupRequestState) (R, error) {
 	return c.Put("/groups/%s/action", state, id)
 }
 
 // DeleteGroup Deletes a group. In order to delete the group and therefore remove all lights from the group the
 // lights must be powered on.
-func (c *HttpClient[R]) DeleteGroup(id string) (R, error) {
+func (c *Client[R]) DeleteGroup(id string) (R, error) {
 	return c.Delete("/groups/%s", nil, id)
 
 }
