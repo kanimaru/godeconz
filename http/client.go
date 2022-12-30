@@ -13,8 +13,10 @@ type ClientAdapter[R any] interface {
 }
 
 type Client[R any] struct {
-	baseUrl string
-	adapter ClientAdapter[R]
+	baseUrl  string
+	apiUrl   string
+	adapter  ClientAdapter[R]
+	settings godeconz.Settings
 }
 
 // CreateClient that can access the Deconz API it uses [R] as response type from http requests.
@@ -23,44 +25,52 @@ func CreateClient[R any](adapter ClientAdapter[R], settings godeconz.Settings) C
 		settings.HttpProtocol = "http"
 	}
 	client := Client[R]{
-		baseUrl: fmt.Sprintf("%s://%s/api/%s/", settings.HttpProtocol, settings.Address, settings.ApiKey),
-		adapter: adapter,
+		baseUrl:  fmt.Sprintf("%s://%s/", settings.HttpProtocol, settings.Address),
+		apiUrl:   fmt.Sprintf("%s://%s/api/%s/", settings.HttpProtocol, settings.Address, settings.ApiKey),
+		adapter:  adapter,
+		settings: settings,
 	}
 	return client
 }
 
-func (c *Client[R]) getPath(path string, arguments []any) string {
+func (c *Client[R]) getBasePath(path string, arguments ...any) string {
 	path = fmt.Sprintf(path, arguments...)
 	url := c.baseUrl + path
 	return url
 }
 
+func (c *Client[R]) getApiPath(path string, arguments ...any) string {
+	path = fmt.Sprintf(path, arguments...)
+	url := c.apiUrl + path
+	return url
+}
+
 func (c *Client[R]) Get(path string, container interface{}, pathArguments ...any) (R, error) {
-	p := c.getPath(path, pathArguments)
+	p := c.getApiPath(path, pathArguments)
 	return c.adapter.Get(p, container)
 }
 
 func (c *Client[R]) PostWithResult(path string, body interface{}, container interface{}, pathArguments ...any) (R, error) {
-	p := c.getPath(path, pathArguments)
+	p := c.getApiPath(path, pathArguments)
 	return c.adapter.Post(p, body, container)
 }
 
 func (c *Client[R]) Post(path string, body interface{}, pathArguments ...any) (R, error) {
-	p := c.getPath(path, pathArguments)
+	p := c.getApiPath(path, pathArguments)
 	return c.adapter.Post(p, body, nil)
 }
 
 func (c *Client[R]) PutWithResult(path string, body interface{}, container interface{}, pathArguments ...any) (R, error) {
-	p := c.getPath(path, pathArguments)
+	p := c.getApiPath(path, pathArguments)
 	return c.adapter.Put(p, body, container)
 }
 
 func (c *Client[R]) Put(path string, body interface{}, pathArguments ...any) (R, error) {
-	p := c.getPath(path, pathArguments)
+	p := c.getApiPath(path, pathArguments)
 	return c.adapter.Put(p, body, nil)
 }
 
 func (c *Client[R]) Delete(path string, container interface{}, pathArguments ...any) (R, error) {
-	p := c.getPath(path, pathArguments)
+	p := c.getApiPath(path, pathArguments)
 	return c.adapter.Delete(p, container)
 }

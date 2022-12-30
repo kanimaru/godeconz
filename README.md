@@ -5,7 +5,7 @@ It has exchangeable HTTP Client (default Resty) and Logger (default standard go 
 
 ## Features
 - [ ] Alarm Systems 
-- [ ] Configuration 
+- [x] Configuration 
 - [x] Groups 
 - [x] Lights 
 - [ ] Rules 
