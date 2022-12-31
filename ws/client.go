@@ -4,11 +4,14 @@ import (
 	"container/list"
 	"encoding/json"
 	"github.com/kanimaru/godeconz"
+	"github.com/kanimaru/godeconz/http"
 	"net/url"
+	"strconv"
 )
 
 type Client struct {
 	callbacks list.List
+	url       *url.URL
 	adapter   Adapter
 	logger    godeconz.Logger
 }
@@ -21,11 +24,23 @@ type Adapter interface {
 // CreateClient creates a websocket client for Phoscon WSS.
 // The Websocket functionality is still under development.
 // Notably added and deleted notifications might not be issued under all circumstances.
-func CreateClient(adapter Adapter, logger godeconz.Logger) *Client {
+func CreateClient(url *url.URL, adapter Adapter, logger godeconz.Logger) *Client {
 	return &Client{
 		adapter: adapter,
 		logger:  logger,
+		url:     url,
 	}
+}
+
+// CreateClientFromConfig is an alias for CreateClient that uses the config from REST to determine the URL for websocket.
+func CreateClientFromConfig(client http.Client[any], adapter Adapter, logger godeconz.Logger) *Client {
+	config := http.ConfigResponse{}
+	_, err := client.GetConfig(&config)
+	if err != nil {
+		panic(err)
+	}
+	wsUrl, err := url.Parse("ws://" + config.Ipaddress + ":" + strconv.Itoa(config.WebsocketPort))
+	return CreateClient(wsUrl, adapter, logger)
 }
 
 func (c *Client) Connect(host *url.URL) {
