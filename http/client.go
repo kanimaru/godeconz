@@ -43,6 +43,9 @@ func (c *Client[R]) getBasePath(path string, arguments ...any) string {
 }
 
 func (c *Client[R]) getApiPath(path string, arguments ...any) string {
+	if len(arguments) == 0 {
+		return c.apiUrl + path
+	}
 	path = fmt.Sprintf(path, arguments...)
 	url := c.apiUrl + path
 	return url
