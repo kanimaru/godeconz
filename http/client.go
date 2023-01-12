@@ -34,6 +34,9 @@ func CreateClient[R any](adapter ClientAdapter[R], settings godeconz.Settings) C
 }
 
 func (c *Client[R]) getBasePath(path string, arguments ...any) string {
+	if len(arguments) == 0 {
+		return c.baseUrl + path
+	}
 	path = fmt.Sprintf(path, arguments...)
 	url := c.baseUrl + path
 	return url
