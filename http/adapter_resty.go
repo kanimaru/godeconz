@@ -3,13 +3,14 @@ package http
 import (
 	"github.com/go-resty/resty/v2"
 	"github.com/kanimaru/godeconz"
+	"reflect"
 )
 
 type AdapterResty struct {
 	client *resty.Client
 	logger godeconz.Logger
 	trace  bool
-	cache  map[string]EtagCacheEntry
+	cache  map[string]*EtagCacheEntry
 }
 
 // CreateAdapterHttpClientResty to plugin deconz api
@@ -18,7 +19,7 @@ func CreateAdapterHttpClientResty(client *resty.Client, logger godeconz.Logger, 
 		client: client,
 		logger: logger,
 		trace:  trace,
-		cache:  make(map[string]EtagCacheEntry),
+		cache:  make(map[string]*EtagCacheEntry),
 	}
 }
 
@@ -34,13 +35,13 @@ func (c AdapterResty) Get(path string, container interface{}) (*resty.Response, 
 	}
 
 	response, err := r.
-		SetResult(&container).
+		SetResult(container).
 		Get(path)
 	if err != nil {
 		return response, err
 	}
 
-	if c.HandleEtag(response, path, &container) {
+	if c.HandleEtag(response, path, container) {
 		c.logger.Debugf("Request cached")
 	}
 
@@ -56,19 +57,21 @@ func (c AdapterResty) HandleEtag(response *resty.Response, path string, containe
 	entry, ok := c.cache[path]
 
 	if response.StatusCode() == 304 {
-		container = entry.content
+		data := reflect.Indirect(reflect.ValueOf(entry.content))
+		source := reflect.Indirect(reflect.ValueOf(container))
+		source.Set(data)
 		return true
 	}
 
 	etag := response.Header().Get("ETag")
 	if etag != "" {
 		if !ok {
-			entry = EtagCacheEntry{
+			entry = &EtagCacheEntry{
 				etag: etag,
 			}
 			c.cache[path] = entry
 		}
-		entry.content = &container
+		entry.content = container
 	}
 	return false
 }

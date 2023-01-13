@@ -137,12 +137,12 @@ type LightRequestDelete struct {
 
 // GetAllLights Returns a list of all lights.
 func (c *Client[R]) GetAllLights(container *map[string]LightResponseState) (R, error) {
-	return c.Get("/lights", &container)
+	return c.Get("/lights", container)
 }
 
 // GetLightState Returns the full state of a light.
 func (c *Client[R]) GetLightState(id string, container *LightResponseState) (R, error) {
-	return c.Get("/lights/%s", &container, id)
+	return c.Get("/lights/%s", container, id)
 }
 
 // SetLightState Sets the state of a light.

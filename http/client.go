@@ -9,7 +9,7 @@ type ClientAdapter[R any] interface {
 	Get(path string, container interface{}) (R, error)
 	Post(path string, data interface{}, container interface{}) (R, error)
 	Put(path string, data interface{}, container interface{}) (R, error)
-	Delete(path string, container interface{}) (R, error)
+	Delete(path string, data interface{}) (R, error)
 }
 
 type Client[R any] struct {

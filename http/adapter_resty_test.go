@@ -23,7 +23,7 @@ func TestAdapterHttpClientResty_Get(t *testing.T) {
 			client: resty.New(),
 			logger: NewMockLogger(),
 			trace:  false,
-			cache:  make(map[string]EtagCacheEntry),
+			cache:  make(map[string]*EtagCacheEntry),
 		}
 
 		// WHEN
