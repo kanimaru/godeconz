@@ -52,31 +52,31 @@ func (c *Client[R]) getApiPath(path string, arguments ...any) string {
 }
 
 func (c *Client[R]) Get(path string, container interface{}, pathArguments ...any) (R, error) {
-	p := c.getApiPath(path, pathArguments)
+	p := c.getApiPath(path, pathArguments...)
 	return c.adapter.Get(p, container)
 }
 
 func (c *Client[R]) PostWithResult(path string, body interface{}, container interface{}, pathArguments ...any) (R, error) {
-	p := c.getApiPath(path, pathArguments)
+	p := c.getApiPath(path, pathArguments...)
 	return c.adapter.Post(p, body, container)
 }
 
 func (c *Client[R]) Post(path string, body interface{}, pathArguments ...any) (R, error) {
-	p := c.getApiPath(path, pathArguments)
+	p := c.getApiPath(path, pathArguments...)
 	return c.adapter.Post(p, body, nil)
 }
 
 func (c *Client[R]) PutWithResult(path string, body interface{}, container interface{}, pathArguments ...any) (R, error) {
-	p := c.getApiPath(path, pathArguments)
+	p := c.getApiPath(path, pathArguments...)
 	return c.adapter.Put(p, body, container)
 }
 
 func (c *Client[R]) Put(path string, body interface{}, pathArguments ...any) (R, error) {
-	p := c.getApiPath(path, pathArguments)
+	p := c.getApiPath(path, pathArguments...)
 	return c.adapter.Put(p, body, nil)
 }
 
 func (c *Client[R]) Delete(path string, container interface{}, pathArguments ...any) (R, error) {
-	p := c.getApiPath(path, pathArguments)
+	p := c.getApiPath(path, pathArguments...)
 	return c.adapter.Delete(p, container)
 }
