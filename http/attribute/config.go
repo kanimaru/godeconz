@@ -9,6 +9,16 @@ type Config struct {
 	Battery uint8 `json:"battery"`
 }
 
+// ConfigZHAPressure Not defined by API added for convenience
+type ConfigZHAPressure struct {
+	Config
+}
+
+// ConfigZHAOpenClose Not defined by API added for convenience
+type ConfigZHAOpenClose struct {
+	Config
+}
+
 type ConfigDaylight struct {
 	Config
 	// 	True if the daylight sensor is configured with coordinates.	R

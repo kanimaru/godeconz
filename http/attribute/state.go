@@ -37,6 +37,17 @@ type StateZHAConsumption struct {
 	Power       int    `json:"power"`
 }
 
+// StateDaylight not documented by API
+type StateDaylight struct {
+	Dark     bool `json:"dark"`
+	Daylight bool `json:"daylight"`
+	// ISO 8601 timestamp
+	Lastupdated string `json:"lastupdated"`
+	Status      int    `json:"status"`
+	Sunrise     string `json:"sunrise"`
+	Sunset      string `json:"sunset"`
+}
+
 type StateZHAFire struct {
 	Fire bool `json:"fire"`
 	// ISO 8601 timestamp
