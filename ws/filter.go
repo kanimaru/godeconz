@@ -4,19 +4,19 @@ package ws
 // be ANDed. Ex: 2 ids are specified and one emitType then the message will be processed when one of the id matches AND
 // the emitType.
 type Filter struct {
-	eventTypes    []EventType
-	ids           []string
-	resourceTypes []ResourceType
-	messageTypes  []MessageType
-	uniqueIds     []string
+	EventTypes    []EventType
+	Ids           []string
+	ResourceTypes []ResourceType
+	MessageTypes  []MessageType
+	UniqueIds     []string
 }
 
 func (f Filter) check(message Message) bool {
-	return contains(f.eventTypes, message.EventType) &&
-		contains(f.ids, message.Id) &&
-		contains(f.resourceTypes, message.ResourceType) &&
-		contains(f.messageTypes, message.MessageType) &&
-		contains(f.uniqueIds, message.UniqueId)
+	return contains(f.EventTypes, message.EventType) &&
+		contains(f.Ids, message.Id) &&
+		contains(f.ResourceTypes, message.ResourceType) &&
+		contains(f.MessageTypes, message.MessageType) &&
+		contains(f.UniqueIds, message.UniqueId)
 }
 
 func contains[T comparable](content []T, value T) bool {
