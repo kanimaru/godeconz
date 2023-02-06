@@ -33,7 +33,7 @@ func CreateClient(url *url.URL, adapter Adapter, logger godeconz.Logger) *Client
 }
 
 // CreateClientFromConfig is an alias for CreateClient that uses the config from REST to determine the URL for websocket.
-func CreateClientFromConfig(client http.Client[any], adapter Adapter, logger godeconz.Logger) *Client {
+func CreateClientFromConfig[R any](client http.Client[R], adapter Adapter, logger godeconz.Logger) *Client {
 	config := http.ConfigResponse{}
 	_, err := client.GetConfig(&config)
 	if err != nil {
