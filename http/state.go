@@ -1,4 +1,4 @@
-package attribute
+package http
 
 type HAAirQualityValues string
 

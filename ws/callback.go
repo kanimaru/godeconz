@@ -5,25 +5,13 @@ type Callback interface {
 	OnMessage(message Message)
 }
 
-type BaseCallback struct {
-	Handler func(message Message)
+type CallbackHandler interface {
+	AddCallback(callback Callback, filter Filter)
+	RemoveCallback(callback Callback) bool
 }
 
-// CallbackSendToChan sends messages to the given channel it registers itself as callback and will unregister itself as
-// soon as the channel gets closed.
-func (c *Client) CallbackSendToChan(messages chan Message, filter Filter) Callback {
-	cb := BaseCallback{}
-	cb.Handler = func(message Message) {
-		select {
-		case messages <- message:
-			// Message send successfully
-		default:
-			// Channel got closed
-			c.RemoveCallback(cb)
-		}
-	}
-	c.AddCallback(cb, filter)
-	return cb
+type BaseCallback struct {
+	Handler func(message Message)
 }
 
 func (b BaseCallback) OnMessage(message Message) {
@@ -44,7 +32,8 @@ func (c *Client) AddCallback(callback Callback, filter Filter) {
 
 func (c *Client) RemoveCallback(callback Callback) bool {
 	for el := c.callbacks.Front(); el != nil; el = el.Next() {
-		if el.Value.(CallbackConfig).callback == callback {
+		config := el.Value.(CallbackConfig)
+		if config.callback == callback {
 			c.callbacks.Remove(el)
 			return true
 		}

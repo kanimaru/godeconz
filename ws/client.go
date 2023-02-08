@@ -43,14 +43,14 @@ func CreateClientFromConfig[R any](client http.Client[R], adapter Adapter, logge
 	return CreateClient(wsUrl, adapter, logger)
 }
 
-func (c *Client) Connect(host *url.URL) {
+func (c *Client) Connect() {
 	messages := make(chan []byte)
 	go func() {
 		for msg := range messages {
 			c.handleMessages(msg)
 		}
 	}()
-	err := c.adapter.Connect(host, messages)
+	err := c.adapter.Connect(c.url, messages)
 	if err != nil {
 		panic(err)
 	}

@@ -9,6 +9,13 @@ type Filter struct {
 	ResourceTypes []ResourceType
 	MessageTypes  []MessageType
 	UniqueIds     []string
+
+	// HasState checks if state attribute is set otherwise the message gets blocked
+	HasState bool
+	// HasAttr checks if attr attribute is set otherwise the message gets blocked
+	HasAttr bool
+	// HasConfig checks if config attribute is set otherwise the message gets blocked
+	HasConfig bool
 }
 
 func (f Filter) check(message Message) bool {
@@ -16,7 +23,10 @@ func (f Filter) check(message Message) bool {
 		contains(f.Ids, message.Id) &&
 		contains(f.ResourceTypes, message.ResourceType) &&
 		contains(f.MessageTypes, message.MessageType) &&
-		contains(f.UniqueIds, message.UniqueId)
+		contains(f.UniqueIds, message.UniqueId) &&
+		(!f.HasState || message.State != nil) &&
+		(!f.HasAttr || message.Attr != nil) &&
+		(!f.HasConfig || message.Config != nil)
 }
 
 func contains[T comparable](content []T, value T) bool {

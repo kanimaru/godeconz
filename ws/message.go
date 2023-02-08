@@ -1,6 +1,9 @@
 package ws
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"time"
+)
 
 type EventType string
 
@@ -35,6 +38,19 @@ type MessageType string
 // MessageTypeEvent the message holds an event.
 const MessageTypeEvent MessageType = "event"
 
+// Attr is not documented but found in the wild. Here are probably other missing fields
+type Attr struct {
+	Id               string    `json:"id,omitempty"`
+	Lastannounced    time.Time `json:"lastannounced,omitempty"`
+	Lastseen         string    `json:"lastseen,omitempty"`
+	Manufacturername string    `json:"manufacturername,omitempty"`
+	Modelid          string    `json:"modelid,omitempty"`
+	Name             string    `json:"name,omitempty"`
+	Swversion        string    `json:"swversion,omitempty"`
+	Type             string    `json:"type,omitempty"`
+	Uniqueid         string    `json:"uniqueid,omitempty"`
+}
+
 type Message struct {
 	// EventType the event type of the message
 	EventType EventType `json:"e,omitempty"`
@@ -48,7 +64,8 @@ type Message struct {
 	State json.RawMessage `json:"state,omitempty"`
 	// Depending on the websocketnotifyall setting: a map containing all or only the changed config attributes of a sensor resource. Only for changed events.
 	Config json.RawMessage `json:"config,omitempty"`
-
+	// Not documented but found in the wild.
+	Attr *Attr `json:"attr,omitempty"`
 	// UniqueId of the resource to which the message relates, e.g. 00:0d:6f:00:10:65:8a:6e-01-1000. Only for light and sensor resources.
 	UniqueId string `json:"uniqueid,omitempty"`
 	// The (new) name of a resource. Only for changed events.
@@ -63,4 +80,39 @@ type Message struct {
 	Light json.RawMessage `json:"light,omitempty"`
 	//	The full sensor resource. Only for added events of a sensor resource.
 	Sensor json.RawMessage `json:"sensor,omitempty"`
+}
+
+func (m Message) StateAs(data interface{}) error {
+	if m.State == nil {
+		return nil
+	}
+	return json.Unmarshal(m.State, data)
+}
+
+func (m Message) ConfigAs(data interface{}) error {
+	if m.Config == nil {
+		return nil
+	}
+	return json.Unmarshal(m.Config, data)
+}
+
+func (m Message) GroupAs(data interface{}) error {
+	if m.Group == nil {
+		return nil
+	}
+	return json.Unmarshal(m.Group, data)
+}
+
+func (m Message) LightAs(data interface{}) error {
+	if m.Light == nil {
+		return nil
+	}
+	return json.Unmarshal(m.Light, data)
+}
+
+func (m Message) SensorAs(data interface{}) error {
+	if m.Sensor == nil {
+		return nil
+	}
+	return json.Unmarshal(m.Sensor, data)
 }

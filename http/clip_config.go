@@ -1,4 +1,4 @@
-package attribute
+package http
 
 type CLIPConfigHumidity struct {
 	Offset int16 `json:"offset"`

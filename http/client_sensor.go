@@ -80,8 +80,13 @@ func (c *Client[R]) GetAllSensors(container *map[string]SensorResponse[any, any]
 	return c.Get("/sensors", container)
 }
 
-// GetSensor Returns the sensor with the specified id.
+// GetSensor Returns the sensor with the specified id. See also GetSensor.
 func (c *Client[R]) GetSensor(id string, container *SensorResponse[any, any]) (R, error) {
+	return c.Get("/sensors/%s", container, id)
+}
+
+// GetSensor is almost same a Client.GetSensor but you can add generics for the response
+func GetSensor[R, C, S any](c *Client[R], id string, container *SensorResponse[C, S]) (R, error) {
 	return c.Get("/sensors/%s", container, id)
 }
 
