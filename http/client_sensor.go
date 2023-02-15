@@ -35,7 +35,7 @@ const SensorModeScene SensorMode = 1
 const SensorModeTwoGroup SensorMode = 2
 const SensorModeTemperature SensorMode = 3
 
-type SensorResponse[C, S any] struct {
+type SensorResponse[C Config, S any] struct {
 	// The config of the sensor. Refer to Change sensor config for further details.
 	Config C `json:"config"`
 	// The Endpoint of the sensor.
@@ -76,17 +76,17 @@ func (c *Client[R]) CreateSensor(create SensorRequestCreate[any]) (R, error) {
 
 // GetAllSensors Returns a list of all sensors. If there are no sensors in the system an empty object {} is
 // returned.
-func (c *Client[R]) GetAllSensors(container *map[string]SensorResponse[any, any]) (R, error) {
+func (c *Client[R]) GetAllSensors(container *map[string]SensorResponse[BaseConfig, any]) (R, error) {
 	return c.Get("/sensors", container)
 }
 
 // GetSensor Returns the sensor with the specified id. See also GetSensor.
-func (c *Client[R]) GetSensor(id string, container *SensorResponse[any, any]) (R, error) {
+func (c *Client[R]) GetSensor(id string, container *SensorResponse[BaseConfig, any]) (R, error) {
 	return c.Get("/sensors/%s", container, id)
 }
 
 // GetSensor is almost same a Client.GetSensor but you can add generics for the response
-func GetSensor[R, C, S any](c *Client[R], id string, container *SensorResponse[C, S]) (R, error) {
+func GetSensor[R any, C Config, S any](c *Client[R], id string, container *SensorResponse[C, S]) (R, error) {
 	return c.Get("/sensors/%s", container, id)
 }
 

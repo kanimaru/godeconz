@@ -1,26 +1,44 @@
 package http
 
-type Config struct {
+type Config interface {
+	IsOn() bool
+	IsReachable() *bool
+	GetBattery() *uint8
+}
+
+type BaseConfig struct {
 	// (default: true)
 	On bool `json:"on"`
 	// (default: true)
-	Reachable bool `json:"reachable"`
+	Reachable *bool `json:"reachable,omitempty"`
 	// (0–100)
-	Battery uint8 `json:"battery"`
+	Battery *uint8 `json:"battery,omitempty"`
+}
+
+func (b BaseConfig) IsOn() bool {
+	return b.On
+}
+
+func (b BaseConfig) IsReachable() *bool {
+	return b.Reachable
+}
+
+func (b BaseConfig) GetBattery() *uint8 {
+	return b.Battery
 }
 
 // ConfigZHAPressure Not defined by API added for convenience
 type ConfigZHAPressure struct {
-	Config
+	BaseConfig
 }
 
 // ConfigZHAOpenClose Not defined by API added for convenience
 type ConfigZHAOpenClose struct {
-	Config
+	BaseConfig
 }
 
 type ConfigDaylight struct {
-	Config
+	BaseConfig
 	// 	True if the daylight sensor is configured with coordinates.	R
 	Daylight bool `json:"daylight"`
 	// 	Latitude of the set location/timezone.	W
@@ -34,7 +52,7 @@ type ConfigDaylight struct {
 }
 
 type ConfigZHALightLevel struct {
-	Config
+	BaseConfig
 	// Specifies at which lightlevel the dark attribute turns false. Default: 12000 RW
 	Tholddark uint16 `json:"tholddark"`
 
@@ -44,14 +62,14 @@ type ConfigZHALightLevel struct {
 }
 
 type ConfigZHAHumidity struct {
-	Config
+	BaseConfig
 	// (-32768–32767)	Adds a signed offset value to measured state values. Values send by the REST-API are already
 	// amended by the offset. RW
 	Offset int16 `json:"offset"`
 }
 
 type ConfigZHAPresence struct {
-	Config
+	BaseConfig
 	// (0–65535)	Timeout in seconds presence state is set to false again. RW
 	Duration uint16 `json:"duration"`
 	// (0–65535) The occupied to unoccupied delay in seconds. RW
@@ -59,7 +77,7 @@ type ConfigZHAPresence struct {
 }
 
 type ConfigZHATemperature struct {
-	Config
+	BaseConfig
 	// Adds a signed offset value to measured state values. Values send by the REST-API are already amended by
 	// the offset.	R
 	Offset int16 `json:"offset"`
@@ -71,7 +89,7 @@ const ZHASwitchModeMomentary ZHASwitchMode = "momentary"
 const ZHASwitchModeRocker ZHASwitchMode = "rocker"
 
 type ConfigZHASwitch struct {
-	Config
+	BaseConfig
 	// The associated Zigbee group the sensor controls. (only supported by some sensors) R
 	Group uint16 `json:"group"`
 
@@ -133,7 +151,7 @@ const ZHAThermostatTemperatureMeasurementFloorSensor ZHAThermostatTemperatureMea
 const ZHAThermostatTemperatureMeasurementFloorProtection ZHAThermostatTemperatureMeasurement = "floor protection"
 
 type ConfigZHAThermostat struct {
-	Config
+	BaseConfig
 	// Sets the current operating mode of a thermostat. (Supported modes are device dependent) RW
 	Mode ZHAThermostatMode `json:"mode"`
 	// Flip the display for TRVs supporting it. RW
