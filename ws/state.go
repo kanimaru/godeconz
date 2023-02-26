@@ -7,29 +7,29 @@ type StateDaylight struct {
 	// FIXME HERE ARE MISSING FIELDS
 }
 
+type StateBaseLight struct {
+	Alert interface{} `json:"alert,omitempty"`
+	Bri   int         `json:"bri,omitempty"`
+	On    bool        `json:"on,omitempty"`
+}
+
 type StateDimmablelight struct {
-	Alert     interface{} `json:"alert,omitempty"`
-	Bri       int         `json:"bri,omitempty"`
-	On        bool        `json:"on,omitempty"`
-	Reachable bool        `json:"reachable,omitempty"`
+	StateBaseLight
+	Reachable bool `json:"reachable,omitempty"`
 }
 
 type StateColortemperaturelight struct {
-	Alert     string `json:"alert"`
-	Bri       int    `json:"bri"`
+	StateBaseLight
 	Colormode string `json:"colormode"`
 	Ct        int    `json:"ct"`
-	On        bool   `json:"on"`
 	Reachable bool   `json:"reachable"`
 }
 
 type StateExtendedcolorlight struct {
 	// FIXME HERE ARE MISSING FIELDS
-	Alert     string `json:"alert"`
-	Bri       int    `json:"bri"`
+	StateBaseLight
 	Colormode string `json:"colormode"`
 	Ct        int    `json:"ct"`
-	On        bool   `json:"on"`
 	Reachable bool   `json:"reachable"`
 }
 
