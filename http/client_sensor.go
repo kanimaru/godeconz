@@ -1,5 +1,7 @@
 package http
 
+import "github.com/kanimaru/godeconz"
+
 type SensorRequestCreateConfig struct {
 	// (default: true)
 	On bool `json:"on"`
@@ -35,7 +37,7 @@ const SensorModeScene SensorMode = 1
 const SensorModeTwoGroup SensorMode = 2
 const SensorModeTemperature SensorMode = 3
 
-type SensorResponse[C Config, S any] struct {
+type SensorResponse[C godeconz.Config, S any] struct {
 	// The config of the sensor. Refer to Change sensor config for further details.
 	Config C `json:"config"`
 	// The Endpoint of the sensor.
@@ -86,7 +88,7 @@ func (c *Client[R]) GetSensor(id string, container *SensorResponse[BaseConfig, a
 }
 
 // GetSensor is almost same a Client.GetSensor but you can add generics for the response
-func GetSensor[R any, C Config, S any](c *Client[R], id string, container *SensorResponse[C, S]) (R, error) {
+func GetSensor[R any, C godeconz.Config, S any](c *Client[R], id string, container *SensorResponse[C, S]) (R, error) {
 	return c.Get("/sensors/%s", container, id)
 }
 

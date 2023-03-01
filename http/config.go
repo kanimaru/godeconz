@@ -1,11 +1,5 @@
 package http
 
-type Config interface {
-	IsOn() bool
-	IsReachable() *bool
-	GetBattery() *uint8
-}
-
 type BaseConfig struct {
 	// (default: true)
 	On bool `json:"on"`

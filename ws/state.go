@@ -13,6 +13,18 @@ type StateBaseLight struct {
 	On    bool        `json:"on,omitempty"`
 }
 
+func (s StateBaseLight) GetAlert() interface{} {
+	return s.Alert
+}
+
+func (s StateBaseLight) GetBrightness() int {
+	return s.Bri
+}
+
+func (s StateBaseLight) IsOn() bool {
+	return s.On
+}
+
 type StateDimmablelight struct {
 	StateBaseLight
 	Reachable bool `json:"reachable,omitempty"`
