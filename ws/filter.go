@@ -24,9 +24,10 @@ func (f Filter) check(message Message) bool {
 		contains(f.ResourceTypes, message.ResourceType) &&
 		contains(f.MessageTypes, message.MessageType) &&
 		contains(f.UniqueIds, message.UniqueId) &&
-		(!f.HasState || message.State != nil) &&
-		(!f.HasAttr || message.Attr != nil) &&
-		(!f.HasConfig || message.Config != nil)
+		((f.HasState && message.State != nil) ||
+			(f.HasAttr && message.Attr != nil) ||
+			(f.HasConfig && message.Config != nil) ||
+			(!f.HasState && !f.HasConfig && !f.HasAttr))
 }
 
 func contains[T comparable](content []T, value T) bool {
