@@ -8,8 +8,14 @@ type Config interface {
 	GetBattery() *uint8
 }
 
+// StateLight is the base for all lights
 type StateLight interface {
 	GetAlert() interface{}
 	GetBrightness() int
+	IsOn() bool
+}
+
+// StateDevice is the base for all "light" devices also for OnOff  Sockets
+type StateDevice interface {
 	IsOn() bool
 }

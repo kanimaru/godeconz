@@ -58,6 +58,26 @@ type LightResponseStateDetail struct {
 	Reachable *bool `json:"reachable"`
 }
 
+func (l LightResponseStateDetail) IsOn() bool {
+	if l.On != nil {
+		return *l.On
+	} else {
+		return false
+	}
+}
+
+func (l LightResponseStateDetail) GetAlert() interface{} {
+	return l.Alert
+}
+
+func (l LightResponseStateDetail) GetBrightness() int {
+	if l.Bri != nil {
+		return *l.Bri
+	} else {
+		return 0
+	}
+}
+
 type LightResponseState[STATE any] struct {
 
 	// The color capabilities as reported by the light.

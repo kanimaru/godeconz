@@ -7,10 +7,23 @@ type StateDaylight struct {
 	// FIXME HERE ARE MISSING FIELDS
 }
 
+type StateBaseDevice struct {
+	On        bool `json:"on,omitempty"`
+	Reachable bool `json:"reachable,omitempty"`
+}
+
+func (s StateBaseDevice) IsOn() bool {
+	return s.On
+}
+
+func (s StateBaseDevice) IsReachable() bool {
+	return s.Reachable
+}
+
 type StateBaseLight struct {
+	StateBaseDevice
 	Alert interface{} `json:"alert,omitempty"`
 	Bri   int         `json:"bri,omitempty"`
-	On    bool        `json:"on,omitempty"`
 }
 
 func (s StateBaseLight) GetAlert() interface{} {
@@ -21,20 +34,14 @@ func (s StateBaseLight) GetBrightness() int {
 	return s.Bri
 }
 
-func (s StateBaseLight) IsOn() bool {
-	return s.On
-}
-
 type StateDimmablelight struct {
 	StateBaseLight
-	Reachable bool `json:"reachable,omitempty"`
 }
 
 type StateColortemperaturelight struct {
 	StateBaseLight
 	Colormode string `json:"colormode"`
 	Ct        int    `json:"ct"`
-	Reachable bool   `json:"reachable"`
 }
 
 type StateExtendedcolorlight struct {
@@ -42,13 +49,11 @@ type StateExtendedcolorlight struct {
 	StateBaseLight
 	Colormode string `json:"colormode"`
 	Ct        int    `json:"ct"`
-	Reachable bool   `json:"reachable"`
 }
 
 type StateOnOffpluginunit struct {
-	Alert     interface{} `json:"alert"`
-	On        bool        `json:"on"`
-	Reachable bool        `json:"reachable"`
+	StateBaseDevice
+	Alert interface{} `json:"alert"`
 }
 
 type StateZHATemperature struct {
