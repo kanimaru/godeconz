@@ -111,7 +111,7 @@ type ConfigResponseFullState struct {
 	// All groups of the gateway.
 	Groups map[string]GroupResponseAttribute `json:"groups"`
 	// All lights of the gateway.
-	Lights map[string]LightResponseState[LightResponseStateDetail] `json:"lights"`
+	Lights map[string]LightResponseState `json:"lights"`
 	// All rules of the gateway. (as from deconz version > 2.04.12) TODO needs to be implemented
 	Rules json.RawMessage `json:"rules"`
 	// All schedules of the gateway. TODO needs to be implemented

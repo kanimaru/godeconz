@@ -1,5 +1,7 @@
 package http
 
+import "encoding/json"
+
 type LightAlertMode string
 
 // LightAlertNone light is not performing an alert
@@ -78,7 +80,7 @@ func (l LightResponseStateDetail) GetBrightness() int {
 	}
 }
 
-type LightResponseState[STATE any] struct {
+type LightResponseState struct {
 
 	// The color capabilities as reported by the light.
 	Colorcapabilities *int `json:"colorcapabilities"`
@@ -110,10 +112,14 @@ type LightResponseState[STATE any] struct {
 	// Human-readable type of the light.
 	Type string `json:"type"`
 	// The current state of the light.
-	State STATE `json:"state"`
+	State json.RawMessage `json:"state"`
 	// The unique id of the light. It consists of the MAC address of the light followed by a dash and a unique endpoint
 	// identifier in the range 01 to FF.
 	Uniqueid string `json:"uniqueid"`
+}
+
+func (l LightResponseState) StateAs(data interface{}) error {
+	return as(l.State, data)
 }
 
 type LightRequestState struct {
@@ -156,17 +162,12 @@ type LightRequestDelete struct {
 }
 
 // GetAllLights Returns a list of all lights.
-func (c *Client[R]) GetAllLights(container *map[string]LightResponseState[LightResponseStateDetail]) (R, error) {
+func (c *Client[R]) GetAllLights(container *map[string]LightResponseState) (R, error) {
 	return c.Get("/lights", container)
 }
 
-// GetLightState is almost the same as Client.GetLightState but you can add generics for the response
-func GetLightState[R any, S any](c *Client[R], id string, container *LightResponseState[S]) (R, error) {
-	return c.Get("/lights/%s", container, id)
-}
-
 // GetLightState Returns the full state of a light.
-func (c *Client[R]) GetLightState(id string, container *LightResponseState[LightResponseStateDetail]) (R, error) {
+func (c *Client[R]) GetLightState(id string, container *LightResponseState) (R, error) {
 	return c.Get("/lights/%s", container, id)
 }
 

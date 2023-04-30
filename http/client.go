@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/kanimaru/godeconz"
 )
@@ -79,4 +80,11 @@ func (c *Client[R]) Put(path string, body interface{}, pathArguments ...any) (R,
 func (c *Client[R]) Delete(path string, container interface{}, pathArguments ...any) (R, error) {
 	p := c.getApiPath(path, pathArguments...)
 	return c.adapter.Delete(p, container)
+}
+
+func as(val json.RawMessage, data interface{}) error {
+	if val == nil {
+		return nil
+	}
+	return json.Unmarshal(val, data)
 }

@@ -1,6 +1,8 @@
 package http
 
-import "github.com/kanimaru/godeconz"
+import (
+	"encoding/json"
+)
 
 type SensorRequestCreateConfig struct {
 	// (default: true)
@@ -37,9 +39,9 @@ const SensorModeScene SensorMode = 1
 const SensorModeTwoGroup SensorMode = 2
 const SensorModeTemperature SensorMode = 3
 
-type SensorResponse[C godeconz.Config, S any] struct {
+type SensorResponse struct {
 	// The config of the sensor. Refer to Change sensor config for further details.
-	Config C `json:"config"`
+	Config json.RawMessage `json:"config"`
 	// The Endpoint of the sensor.
 	Ep int `json:"ep"`
 	// HTTP etag which changes whenever the sensor changes.
@@ -55,13 +57,21 @@ type SensorResponse[C godeconz.Config, S any] struct {
 	// The name of the sensor.
 	Name string `json:"name"`
 	// The state of the sensor.
-	State S `json:"state"`
+	State json.RawMessage `json:"state"`
 	// Software version of the sensor.
 	Swversion string `json:"swversion"`
 	// The type of the sensor.
 	Type string `json:"type"`
 	// The unique identifiers including the MAC address of the sensor.
 	Uniqueid string `json:"uniqueid"`
+}
+
+func (s SensorResponse) StateAs(data interface{}) error {
+	return as(s.State, data)
+}
+
+func (s SensorResponse) ConfigAs(data interface{}) error {
+	return as(s.Config, data)
 }
 
 type SensorRequestUpdate struct {
@@ -78,17 +88,12 @@ func (c *Client[R]) CreateSensor(create SensorRequestCreate[any]) (R, error) {
 
 // GetAllSensors Returns a list of all sensors. If there are no sensors in the system an empty object {} is
 // returned.
-func (c *Client[R]) GetAllSensors(container *map[string]SensorResponse[BaseConfig, any]) (R, error) {
+func (c *Client[R]) GetAllSensors(container *map[string]SensorResponse) (R, error) {
 	return c.Get("/sensors", container)
 }
 
 // GetSensor Returns the sensor with the specified id. See also GetSensor.
-func (c *Client[R]) GetSensor(id string, container *SensorResponse[BaseConfig, any]) (R, error) {
-	return c.Get("/sensors/%s", container, id)
-}
-
-// GetSensor is almost same a Client.GetSensor but you can add generics for the response
-func GetSensor[R any, C godeconz.Config, S any](c *Client[R], id string, container *SensorResponse[C, S]) (R, error) {
+func (c *Client[R]) GetSensor(id string, container *SensorResponse) (R, error) {
 	return c.Get("/sensors/%s", container, id)
 }
 
