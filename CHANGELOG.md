@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.1.0 (unreleased)
+## v0.1.0 (2026-10-12)
 
 Rewrite. The API is not compatible with v0.0.x.
 
